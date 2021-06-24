@@ -34,6 +34,7 @@ public class CheckNumber{
         }
         return ok;
     }
+    
     public static int discrimination(int[] ans, int[] numbers) throws Exception {
 	    int eat = 0;
 	    int bite = 0;

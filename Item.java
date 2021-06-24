@@ -21,6 +21,7 @@ public class Item{
         out.println("|| 【スラッシュ】相手の数字のスラッシュナンバー(最大の数字-最小の数字)を知ることができる");
         out.println("|| 　　例：1974 → スラッシュナンバーは8(=9-1)");
     }
+
     public int[] shuffle(int[] ansNumber) throws Exception{
         if(!this.cannotUse(this.isDefense())){return ansNumber;}
         Console cons = System.console();
@@ -52,6 +53,7 @@ public class Item{
         this.setDefense(false);
         return ansNumber;
     }
+
     public void target(int[] enemyNumber) throws Exception {
         if(!cannotUse(this.isOffense())){return;}
         int targetNumber = 0;
@@ -81,6 +83,7 @@ public class Item{
         Thread.sleep(1000);
         this.setOffense(false);
     }
+
     public void highLow(int[] enemyNumber) throws Exception {
         if(!cannotUse(this.isOffense())){return;}
         out.print("結果は　");
@@ -96,6 +99,7 @@ public class Item{
         Thread.sleep(1000);
         this.setOffense(false);
     }
+    
     public void slash(int[] enemyNumber) throws Exception {
         if(!cannotUse(this.isOffense())){return;}
         int max = enemyNumber[0];
