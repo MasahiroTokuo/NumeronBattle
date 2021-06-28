@@ -4,25 +4,27 @@ public class CheckNumber{
     public static boolean check(char[] answer, int[] numbers) throws Exception{
         boolean ok = true;
         try{
-            if(answer.length != 4){
-                throw new InputMismatchException();
-            }
+            // length must be 4 characters.
+            if(answer.length != 4) throw new InputMismatchException();
+
+            // digit check 
             for(char i : answer){
-                if(!(Character.isDigit(i))){
-                    throw new InputMismatchException();
-                }
+                if(!(Character.isDigit(i))) throw new InputMismatchException();
             }
+
+            // convert to integer array
             for(int i = 0; i < numbers.length; i++){
                 numbers[i] = Character.getNumericValue(answer[i]);
             }
-            for(int i = 0; i < 3; i++){
-                for(int j = 0; j < 3-i; j++){
-                    if(numbers[i] == numbers[i+j+1]){
-                        throw new InputMismatchException();
-                    }
+
+            //  same number check
+            for(int i = 0; i < numbers.length; i++){
+                for(int j = i+1; j < numbers.length; j++){
+                    if(numbers[i] == numbers[j]) throw new InputMismatchException();
                 }
             }
         }catch(InputMismatchException ime){
+            //  show error message and have player tryed again if the input is NOT appropriate
             ok = false;
             out.println("|| 不正な文字列が入力されました");
             out.println("||  ①　数字が4桁ではない");
@@ -30,12 +32,14 @@ public class CheckNumber{
             out.println("||  ③　同じ数字が含まれている");
             out.println("|| 上の3点のいずれかに該当しています");
             out.println("再入力してください");
+            Thread.sleep(1000);
             return ok;
         }
         return ok;
     }
     
-    public static int discrimination(int[] ans, int[] numbers) throws Exception {
+    public static int[] discrimination(int[] ans, int[] numbers) throws Exception {
+        //  count EAT & BITE
 	    int eat = 0;
 	    int bite = 0;
 	    for(int i = 0; i < 4; i++){
@@ -50,12 +54,7 @@ public class CheckNumber{
 	            eat++;
 	        }
 	    }
-	    out.print("　  →　");
-        Thread.sleep(1000);
-        out.print(eat + "-EAT ");
-        Thread.sleep(1000);
-        out.println((bite - eat) + "-BITE");
-        Thread.sleep(1000);
-	    return eat;
+        int[] eatBite = {eat, (bite - eat)};
+	    return eatBite;
 	}
 }

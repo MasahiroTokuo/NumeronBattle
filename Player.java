@@ -1,55 +1,53 @@
 import java.io.*;
 import java.util.*;
 import static java.lang.System.out;
-public class Player{
-    private String name;
+public class Player extends NumeronPlayer{
     private boolean ok;
     private char[] input;
-    private int[] ansNumber;
-    private int[] attackNumber;
     private Item item;
     private boolean[] itemUsable = new boolean[1];
+    private NumeronPlayer enemy;
 
     public void set() throws Exception{
         Console cons = System.console();
         out.println("【" + this.getName() + "】4桁の数字を設定してください");
         while(!this.isOk()){
+            // get console line
             this.setInput(cons.readPassword("→"));
+
+            // check input
+            String str = new String(this.getInput());
             this.setOk(CheckNumber.check(this.input, this.ansNumber));
         }
-    }
-
-    public void setRandom() throws Exception{
-        List<Integer> intList = new ArrayList<>();
-        for (int i = 0; i < 10; i++){
-            intList.add(i);
-        }
-	    for(int i = 0; i < this.getAnsNumber().length; i++){
-            int random = new java.util.Random().nextInt(intList.size());
-	        this.getAnsNumber()[i] = intList.get(random);
-            intList.remove(random);
-	    }
     }
 
     public int attack(int[] enemyNumber) throws Exception{
         this.setOk(false);
         while(!this.isOk()){
             out.println(this.getName() + "の攻撃ターン");
+            // get console line
             String atk = new Scanner(System.in).nextLine();
+
             if(atk.equals("アイテム")||atk.equals("item")){
                 this.useItem(enemyNumber);
                 continue;
             }
-            this.setInput(atk.toCharArray());
+            this.setInput(atk.toCharArray());  //convert to character array
             this.setOk(CheckNumber.check(this.getInput(), this.getAttackNumber()));
         }
-        int eat = CheckNumber.discrimination(enemyNumber, this.getAttackNumber());
+        int[] eatBite = CheckNumber.discrimination(enemyNumber, this.getAttackNumber());
+        out.print("　  →　");
+        Thread.sleep(1000);
+        out.print(eatBite[0] + "-EAT ");
+        Thread.sleep(1000);
+        out.println(eatBite[1] + "-BITE");
+        Thread.sleep(1000);
         this.setItemUsable(true);
-        return eat;
+        return eatBite[0];
     }
 
     public void useItem(int[] enemyNumber) throws Exception{
-        if(this.isItemUsable()[0] == false){
+        if(this.isItemUsable()[0] == false){  
             out.println("このターンすでにアイテムを使用しています");
             return;
         }
@@ -69,10 +67,20 @@ public class Player{
             }
             break;
         }
+        /* 
+        *  @param:
+        *   itemNumber: int
+        *
+        *   0: show explanations of items
+        *   1: use Shuffle (diffensive item) 
+        *   2: use Target (offensive item)
+        *   3: use High&Low (offensive item)
+        *   4: use Slash (offensive item)
+        */
         switch(itemNumber){
             case 0:
                 this.getItem().explanation();
-                this.setItemUsable(false);
+                this.setItemUsable(false);  //説明の表示をアイテムの使用に含まないため
                 break;
             case 1:
                 this.setAnsNumber(this.getItem().shuffle(this.getAnsNumber()));
@@ -90,27 +98,29 @@ public class Player{
         this.setItemUsable(!this.isItemUsable()[0]);
     }
 
-    public String getName(){return this.name;}
+    public void shuffled()throws Exception{throw new Exception();}
+
     public boolean isOk(){return this.ok;}
     public char[] getInput(){return this.input;}
-    public int[] getAnsNumber(){return this.ansNumber;}
-    public int[] getAttackNumber(){return this.attackNumber;}
     public Item getItem(){return this.item;}
     public boolean[] isItemUsable(){return this.itemUsable;}
-    public void setName(String name){this.name = name;}
+    public NumeronPlayer getEnemy(){return this.enemy;}
     public void setOk(boolean ok){this.ok = ok;}
     public void setInput(char[] input){this.input = input;}
-    public void setAnsNumber(int[] ansNumber){this.ansNumber = ansNumber;}
-    public void setAttackNumber(int[] attackNumber){this.attackNumber = attackNumber;}
-    public void setItem(Item item){this.item = item;}
     public void setItemUsable(boolean iu){this.itemUsable[0] = iu;}
 
     public Player(int p){
-        this.setName("プレイヤー" + p);
+        this.name = "プレイヤー" + p;
         this.setAnsNumber(new int[4]);
         this.setAttackNumber(new int[4]);
         this.setOk(false);
         this.setItemUsable(true);
-        this.setItem(new Item(this.isItemUsable()));
+        this.item = new Item(this.isItemUsable());
+    }
+    public Player(int p, NumeronPlayer enemy){ 
+        //　mode2でShuffleを使用した時にenemyのshuffledメソッドを呼ぶため
+        this(p);
+        this.enemy = enemy;
+        this.item = new Item(this.isItemUsable(), this.getEnemy());
     }
 }

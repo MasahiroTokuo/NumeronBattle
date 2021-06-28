@@ -4,6 +4,7 @@ import static java.lang.System.out;
 public class Item{
     private boolean offense, defense;
     private boolean[] itemUsable = new boolean[1];
+    private NumeronPlayer enemy;
 
     public void explanation(){
         out.println("|| 各プレイヤーはシャッフルとその他3つの内から1つの計2個のアイテムを使用できます");
@@ -23,7 +24,7 @@ public class Item{
     }
 
     public int[] shuffle(int[] ansNumber) throws Exception{
-        if(!this.cannotUse(this.isDefense())){return ansNumber;}
+        if(!this.cannotUse(this.isDefense())) return ansNumber;
         Console cons = System.console();
         char[] input = new char[4];
         int[] newNumber = new int[4];
@@ -37,9 +38,7 @@ public class Item{
             }
             for(int i = 0; i < 4; i++){
                 for(int j = 0; j < 4; j++){
-                    if(ansNumber[i] == newNumber[j]){
-                        check++;
-                    }
+                    if(ansNumber[i] == newNumber[j]) check++;
                 }
             }
             if(check != 4){
@@ -50,20 +49,19 @@ public class Item{
             }
         }
         ansNumber = newNumber;
+        if(this.getEnemy() != null) this.getEnemy().shuffled(); //  mode2の場合のみAIの候補を増やすメソッドを実行
         this.setDefense(false);
         return ansNumber;
     }
 
     public void target(int[] enemyNumber) throws Exception {
-        if(!cannotUse(this.isOffense())){return;}
+        if(!cannotUse(this.isOffense())) return;
         int targetNumber = 0;
         while(true){
             out.println("数字を1つ指定してください");
             try{
                 targetNumber = new Scanner(System.in).nextInt();
-                if(targetNumber > 9 || targetNumber < 0){
-                    throw new IllegalArgumentException();
-                }
+                if(targetNumber > 9 || targetNumber < 0) throw new IllegalArgumentException();
             }catch(Exception e){
                 out.println("0~9の数字を入力してください");
                 targetNumber = 0;
@@ -71,12 +69,8 @@ public class Item{
             }
             break;
         }
-        List<Integer> list = new ArrayList<>(enemyNumber.length);
-        for(int i : enemyNumber){
-            list.add(i);
-        }
-        if(list.contains(targetNumber)){
-            out.println(targetNumber + "は相手の数字の" + (list.indexOf(targetNumber)+1) + "番目に含まれています");
+        if(Arrays.asList(enemyNumber).contains(targetNumber)){
+            out.println(targetNumber + "は相手の数字の" + (Arrays.asList(enemyNumber).indexOf(targetNumber)+1) + "番目に含まれています");
         }else{
             out.println(targetNumber + "は相手の数字に含まれていません");
         }
@@ -85,7 +79,7 @@ public class Item{
     }
 
     public void highLow(int[] enemyNumber) throws Exception {
-        if(!cannotUse(this.isOffense())){return;}
+        if(!cannotUse(this.isOffense())) return;
         out.print("結果は　");
         Thread.sleep(1000);
         for(int i : enemyNumber){
@@ -101,7 +95,7 @@ public class Item{
     }
     
     public void slash(int[] enemyNumber) throws Exception {
-        if(!cannotUse(this.isOffense())){return;}
+        if(!cannotUse(this.isOffense())) return;
         int max = enemyNumber[0];
         int min = enemyNumber[0];
         for(int i : enemyNumber){
@@ -127,6 +121,7 @@ public class Item{
     public boolean isOffense(){return this.offense;}
     public boolean isDefense(){return this.defense;}
     public boolean isItemUsable(){return this.itemUsable[0];}
+    public NumeronPlayer getEnemy(){return this.enemy;}
     public void setOffense(boolean off){this.offense = off;}
     public void setDefense(boolean def){this.defense = def;}
     public void setItemUsable(boolean[] iu){this.itemUsable = iu;}
@@ -135,5 +130,10 @@ public class Item{
         this.setOffense(true);
         this.setDefense(true);
         this.setItemUsable(iu);
+    }
+    public Item(boolean[] iu, NumeronPlayer enemy){
+        //　mode2でShuffleを使用した時にenemyのshuffledメソッドを呼ぶため
+        this(iu);
+        this.enemy = enemy;
     }
 }
