@@ -74,19 +74,18 @@ public class AIplayer extends NumeronPlayer{
     public void setShuffledCandidate(int[] array, ArrayList<int[]> newCandidate, int count)throws Exception{
         //  取得した数字の「組み合わせ」に対する順列24個を新しい候補に入れる
         for(int i = 0; i < array.length; i++){
-            /*  数字を1つずつずらして新しい候補に入れていく
-                例：1234→2341→3412→4123   */
+            //newArrayを用意してarrayをコピーし、newCandidateに入れる
             int[] newArray = new int[4];
-            for(int j = 0; j < 3; j++){
-                newArray[j] = array[j+1];
+            for(int j = 0; j < 4; j++){
+                newArray[j] = array[j];
             }
-            newArray[3] = array[0];
+            newCandidate.add(newArray);
+            //  arrayの数字を1つずつずらす　　例：1234→2341→3412→4123
             int number = array[0];
             for(int j = 0; j < 3; j++){
                 array[j] = array[j+1];
             }
             array[3] = number;
-            newCandidate.add(newArray);
         }
         switch(count){  //  数字の並び順を入れ替える  例：1234→2134
             case 1:
