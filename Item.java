@@ -69,8 +69,12 @@ public class Item{
             }
             break;
         }
-        if(Arrays.asList(enemyNumber).contains(targetNumber)){
-            out.println(targetNumber + "は相手の数字の" + (Arrays.asList(enemyNumber).indexOf(targetNumber)+1) + "番目に含まれています");
+        List<Integer> list = new ArrayList<>(enemyNumber.length);
+        for(int i : enemyNumber){
+            list.add(i);
+        }
+        if(list.contains(targetNumber)){
+            out.println(targetNumber + "は相手の数字の" + (list.indexOf(targetNumber)+1) + "番目に含まれています");
         }else{
             out.println(targetNumber + "は相手の数字に含まれていません");
         }
